@@ -1,0 +1,12 @@
+*.csproj
+*.sln
+*.userprefs
+*.meta
+*.TTF
+*.ogg
+*.wav
+*.mp3
+Library
+ProjectSettings
+Temp
+Assets/SpaceShooterRedux
