@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerController : MonoBehaviour
+public class EnemyController : MonoBehaviour
 {
-	public float speed = 15.0f;
+	public float speed = 2.0f;
+	public float padding = 1.0f;
 
-	// used to prevent the ship from going flush against the side of the screen
-	public float padding = 0.5f;
+	// controls whether the ship moves left or right across the screen
+	private bool moveLeft = true;
 
-	// used for clamping the player ship's movement
 	private float confineShipLeft;
 	private float confineShipRight;
 
@@ -18,7 +18,7 @@ public class PlayerController : MonoBehaviour
 	{
 		ConfineToCamera ();
 	}
-
+	
 	// Update is called once per frame
 	void Update ()
 	{
@@ -26,16 +26,14 @@ public class PlayerController : MonoBehaviour
 	}
 
 	/// <summary>
-	/// Moves the ship using the left or right arrow keys on the keyboard.
+	/// Enemy ships move automatically.
 	/// </summary>
 	void MoveShip ()
 	{
-		if (Input.GetKey(KeyCode.LeftArrow))
-		{
+		if (moveLeft) {
 			// could have used transform.position += Vector3.left * speed * Time.deltaTime;
-			transform.position += new Vector3(-speed * Time.deltaTime, 0, 0);
-		} else if (Input.GetKey(KeyCode.RightArrow))
-		{
+			transform.position += new Vector3 (-speed * Time.deltaTime, 0, 0);
+		} else {
 			// could have used transform.position += Vector3.right * speed * Time.deltaTime;
 			transform.position += new Vector3 (speed * Time.deltaTime, 0, 0);
 		}
@@ -43,13 +41,22 @@ public class PlayerController : MonoBehaviour
 		temp.x = Mathf.Clamp (transform.position.x, confineShipLeft, confineShipRight);
 		transform.position = temp;
 
+		if (temp.x <= confineShipLeft)
+		{
+			moveLeft = false;
+		} else if (temp.x >= confineShipRight)
+		{
+			moveLeft = true;
+		}
+
 		/* NOTES:
-			Could have used GetAxis("Horizontal") but couldn't figure out clamping the value
+			Taken mostly from PlayerController with some auto movement
+
 		*/
 	}
 
 	/// <summary>
-	/// Confines the players movement to the main camera.
+	/// Confines the enemy ships' movements to the main camera.
 	/// </summary>
 	void ConfineToCamera ()
 	{
