@@ -1,24 +1,23 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class EnemyController : MonoBehaviour
 {
-	public float speed = 2.0f;
-	public float padding = 1.0f;
+	public float speed = 10.0f;
 
-	// controls whether the ship moves left or right across the screen
-	private bool moveLeft = true;
+	// used to prevent the ship from going flush against the side of the screen
+	public float padding = 0.5f;
 
+	// used for clamping the player ship's movement
 	private float confineShipLeft;
 	private float confineShipRight;
 
-	// Use this for initialization
 	void Start ()
 	{
 		ConfineToCamera ();
 	}
-	
+
 	// Update is called once per frame
 	void Update ()
 	{
@@ -26,14 +25,13 @@ public class EnemyController : MonoBehaviour
 	}
 
 	/// <summary>
-	/// Enemy ships move automatically.
+	/// Moves the ship using the left or right arrow keys on the keyboard.
 	/// </summary>
 	void MoveShip ()
 	{
-		if (moveLeft) {
-			// could have used transform.position += Vector3.left * speed * Time.deltaTime;
-			transform.position += new Vector3 (-speed * Time.deltaTime, 0, 0);
-		} else {
+		// if moving left and hit left most side, move right and vice versa
+		transform.position += new Vector3(-speed * Time.deltaTime, 0, 0);
+		{
 			// could have used transform.position += Vector3.right * speed * Time.deltaTime;
 			transform.position += new Vector3 (speed * Time.deltaTime, 0, 0);
 		}
@@ -41,22 +39,13 @@ public class EnemyController : MonoBehaviour
 		temp.x = Mathf.Clamp (transform.position.x, confineShipLeft, confineShipRight);
 		transform.position = temp;
 
-		if (temp.x <= confineShipLeft)
-		{
-			moveLeft = false;
-		} else if (temp.x >= confineShipRight)
-		{
-			moveLeft = true;
-		}
-
 		/* NOTES:
-			Taken mostly from PlayerController with some auto movement
-
+			Could have used GetAxis("Horizontal") but couldn't figure out clamping the value
 		*/
 	}
 
 	/// <summary>
-	/// Confines the enemy ships' movements to the main camera.
+	/// Confines the players movement to the main camera.
 	/// </summary>
 	void ConfineToCamera ()
 	{
